@@ -36,6 +36,10 @@ class File
     end
   end
   
+  proxy_method(:new) do |*args|
+    DistributedFile.new(*args)
+  end
+
   # init filename, mode
   # 
 # File.open(filename, mode="r" [, opt]) => file
@@ -48,21 +52,45 @@ class File
       "distributed truncate #{method} on #{file} to #{integer} bytes"
     end
   end
-    
-  proxy_instance_method(:atime) do
-    "remote time"
+end
+
+class DistributedFile
+  def initialize filename, mode='r', *args
+    @filename = filename
+    @mode = mode
+  end
+
+  def path
+    @filename
+  end
+
+  [:atime, :ctime, :mtime].each do |method|
+    define_method method do
+      "distributed time #{method}"
+    end
+  end
+
+  [:lstat, :stat].each do |method|
+    define_method method do
+      "distributed stat info #{method}"
+    end
+  end
+
+  [:truncate].each do |method|
+    define_method method do |integer|
+      "distributed truncate #{method} on #{@filename} to #{integer} bytes"
+    end
+  end
+
+  def read length=0, *args
+    "remote read"
   end
   
-  # atime
-  # 
-  # ctime
-  # 
-  # lstat
-  # 
-  # mtime
-  # 
-  # truncate
-
-  # read
-  # write
+  def write string
+    "remote write #{string.length} bytes"
+  end
+  
+  def method_missing method
+    raise "Distributed shelf error: #{method} not implemented"
+  end
 end
