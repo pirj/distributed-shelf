@@ -12,12 +12,23 @@ module DistributedShelf
   end
   
   def distributed? file
-    not file.match(/\/remote/).nil?
+    not File.absolute_path(file).match(/\/remote/).nil?
   end
   
   def proxy_method(method, &b)
     old_method = :"_#{method}"
     override_class_method(method) do |*args|
+      if distributed? args[0]
+        b.call(*args)
+      else
+        self.send(old_method, *args)
+      end
+    end
+  end
+  
+  def proxy_instance_method(method, &b)
+    old_method = :"_#{method}"
+    override_instance_method(method) do |*args|
       if distributed? args[0]
         b.call(*args)
       else
