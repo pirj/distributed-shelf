@@ -40,13 +40,10 @@ class File
     DistributedFile.new(*args)
   end
 
-  # init filename, mode
-  # 
-# File.open(filename, mode="r" [, opt]) => file
-# File.open(filename [, mode [, perm]] [, opt]) => file
-# File.open(filename, mode="r" [, opt]) {|file| block } => obj
-# File.open(filename [, mode [, perm]] [, opt]) {|file| block } => obj
-    
+  proxy_method(:open) do |*args|
+    DistributedFile.open(*args)
+  end
+
   [:truncate].each do |method|
     proxy_method(method) do |file, integer|
       "distributed truncate #{method} on #{file} to #{integer} bytes"
@@ -54,6 +51,32 @@ class File
   end
 end
 
+# "r"  |  Read-only, starts at beginning of file  (default mode).
+# -----+--------------------------------------------------------
+# "r+" |  Read-write, starts at beginning of file.
+# -----+--------------------------------------------------------
+# "w"  |  Write-only, truncates existing file
+#      |  to zero length or creates a new file for writing.
+# -----+--------------------------------------------------------
+# "w+" |  Read-write, truncates existing file to zero length
+#      |  or creates a new file for reading and writing.
+# -----+--------------------------------------------------------
+# "a"  |  Write-only, starts at end of file if file exists,
+#      |  otherwise creates a new file for writing.
+# -----+--------------------------------------------------------
+# "a+" |  Read-write, starts at end of file if file exists,
+#      |  otherwise creates a new file for reading and
+#      |  writing.
+# -----+--------------------------------------------------------
+#  "b" |  Binary file mode (may appear with
+#      |  any of the key letters listed above).
+#      |  Suppresses EOL <-> CRLF conversion on Windows. And
+#      |  sets external encoding to ASCII-8BIT unless explicitly
+#      |  specified.
+# -----+--------------------------------------------------------
+#  "t" |  Text file mode (may appear with
+#      |  any of the key letters listed above except "b").
+       
 class DistributedFile
   def initialize filename, mode='r', *args
     @filename = filename
@@ -88,6 +111,17 @@ class DistributedFile
   
   def write string
     "remote write #{string.length} bytes"
+  end
+  
+# File.open(filename, mode="r" [, opt]) => file
+# File.open(filename [, mode [, perm]] [, opt]) => file
+# File.open(filename, mode="r" [, opt]) {|file| block } => obj
+# File.open(filename [, mode [, perm]] [, opt]) {|file| block } => obj
+    
+  def self.open filename, *args, &b
+    p "opening #{filename}"
+    f = self.new filename, *args
+    b.call(f)
   end
   
   def method_missing method
