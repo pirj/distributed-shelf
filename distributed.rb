@@ -1,3 +1,5 @@
+require 'time'
+
 module DistributedShelf
   def security_token
     'fsdgsdfgsdfv32qwg'
@@ -27,6 +29,33 @@ module DistributedShelf
         self.send(old_method, *args, &bl)
       end
     end
+  end
+  
+  def remote url, params
+    response = JSON.parse RestClient.get url, params
+    if response['error']
+      raise class_for_name(response['class']).new(response['error'])
+    else
+      case response['class']
+      when 'String'
+        response['result']
+      when 'Integer'
+        response['result'].to_i
+      when 'Fixnum'
+        response['result']
+      when 'Time'
+        Time.parse response['result']
+      else
+        raise "need conversion #{response}"
+      end
+    end
+  end
+  
+  def class_for_name name
+    namespaces = name.split '::'
+    base = Kernel
+    namespaces.each do |namespace| base = base.const_get(namespace) end
+    base
   end
 end
 

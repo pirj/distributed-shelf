@@ -7,7 +7,7 @@ class File
     :'readable?', :size, :'socket?', :'sticky?', :'symlink?', :'writable?', :'zero?'
     ].each do |method|
     proxy_method(method) do |file|
-      JSON.parse RestClient.get "#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :file => file, :token => security_token}, :accept => :json}
+      remote "#{server_url}/class/#{method}", {:params => {:pwd => Dir.pwd, :file => file, :token => security_token}, :accept => :json}
     end
   end
 
@@ -20,15 +20,9 @@ class File
     end
   end
   
-  [:rename].each do |method|
+  [:rename, :link, :symlink, :truncate].each do |method|
     proxy_method(method) do |*args|
-      JSON.parse RestClient.get "#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :args => args, :token => security_token}, :accept => :json}
-    end
-  end
-  
-  [:link, :symlink].each do |method|
-    proxy_method(method) do |old_name, new_name|
-      "#{old_name}: distributed link #{method} on #{old_name}, #{new_name}"
+      remote "#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :args => args, :token => security_token}, :accept => :json}
     end
   end
   
@@ -44,12 +38,6 @@ class File
 
   proxy_method(:open) do |*args, &b|
     DistributedFile.open(*args, &b)
-  end
-
-  [:truncate].each do |method|
-    proxy_method(method) do |file, integer|
-      "#{file}: distributed truncate to #{integer} bytes"
-    end
   end
 end
 
@@ -93,7 +81,7 @@ class DistributedFile
 
   [:atime, :ctime, :mtime].each do |method|
     define_method method do
-      JSON.parse RestClient.get "#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :file => path, :token => security_token}, :accept => :json}
+      remote "#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :file => path, :token => security_token}, :accept => :json}
     end
   end
   
