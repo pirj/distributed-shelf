@@ -12,11 +12,11 @@ module DistributedShelf
   
   def proxy_method(method, &b)
     old_method = :"_#{method}"
-    override_class_method(method) do |*args|
+    override_class_method(method) do |*args, &bl|
       if distributed? args[0]
-        b.call(*args)
+        b.call(*args, &bl)
       else
-        self.send(old_method, *args)
+        self.send(old_method, *args, &bl)
       end
     end
   end

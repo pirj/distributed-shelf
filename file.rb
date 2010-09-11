@@ -40,8 +40,8 @@ class File
     DistributedFile.new(*args)
   end
 
-  proxy_method(:open) do |*args|
-    DistributedFile.open(*args)
+  proxy_method(:open) do |*args, &b|
+    DistributedFile.open(*args, &b)
   end
 
   [:truncate].each do |method|
@@ -92,6 +92,10 @@ class DistributedFile
       "distributed time #{method}"
     end
   end
+  
+  def close
+    p "closing #{path}"
+  end
 
   [:lstat, :stat].each do |method|
     define_method method do
@@ -121,7 +125,14 @@ class DistributedFile
   def self.open filename, *args, &b
     p "opening #{filename}"
     f = self.new filename, *args
-    b.call(f)
+    if b
+      p "block given"
+      b.call(f)
+      f.close
+    else
+      p "bo block given"
+      f
+    end
   end
   
   def method_missing method
