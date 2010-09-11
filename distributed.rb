@@ -21,7 +21,7 @@ module DistributedShelf
       if distributed? args[0]
         b.call(*args)
       else
-        "calling original #{method} is #{self.send(old_method, *args)}"
+        self.send(old_method, *args)
       end
     end
   end
