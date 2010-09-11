@@ -17,11 +17,11 @@ module DistributedShelf
   
   def proxy_method(method, &b)
     old_method = :"_#{method}"
-    override_class_method(method) do |file|
-      if distributed? file
-        b.call file
+    override_class_method(method) do |*args|
+      if distributed? args[0]
+        b.call(*args)
       else
-        "calling original #{method} is #{self.send(old_method, file)}"
+        "calling original #{method} is #{self.send(old_method, *args)}"
       end
     end
   end

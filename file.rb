@@ -2,12 +2,19 @@ require 'distributed.rb'
 
 class File
   [:atime, :ctime, :mtime, :'directory?'].each do |method|
-    proxy_method(method) do ||
-      "distributed #{method}"
+    proxy_method(method) do |file|
+      "distributed #{method} on #{file}"
     end
   end
 
-
+  [:delete, :unlink].each do |method|
+    proxy_method(method) do |*files|
+      files.each do |file|
+        p "distributed remove #{method} on #{file}"
+      end
+    end
+  end
+  
   # delete(file, ...)
   # unlink
   # 
