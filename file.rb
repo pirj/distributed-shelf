@@ -1,38 +1,33 @@
 require 'distributed.rb'
 
 class File
-  override_instance_method(:atime) {
-    p "in i atime"
-    "proxied atime #{_atime}"
-  }
-    
-  override_class_method(:atime) { |file|
-    p "in c atime"
-    "proxied 2 atime #{_atime(file)}"
-  }
+  def self.proxy_method(method)
+    old_method = :"_#{method}"
+    override_class_method(method) do |file|
+      "#{method} is #{self.send(old_method, file)}"
+    end
+  end
 
-  # def override_instance_method method, &blk # http://whytheluckystiff.net/articles/seeingMetaclassesClearly.html
-  #   (class << self; self; end).instance_eval {
-  #   alias_method "_#{method.to_s}".to_sym, method
-  #     define_method method, &blk
-  #   }
-  #   p "overriding instance method #{method}"
+  [:atime, :ctime, :mtime].each do |method|
+    proxy_method(method)
+  end
+
+  # override_class_method(:atime) do |file|
+  #   "proxied c atime #{_atime(file)}"
   # end
   # 
-  # def self.override_class_method method, &blk
-  #   (class << self; self; end).class_eval {
-  #     alias_method "_#{method.to_s}".to_sym, method
-  #     define_method method, &blk
-  #   }
-  #   p "overriding class method #{method}"
+  # override_class_method(:ctime) do |file|
+  #   "proxied c atime #{_ctime(file)}"
+  # end
+  # 
+  # override_class_method(:mtime) do |file|
+  #   "proxied c atime #{_mtime(file)}"
   # end
 
-  # override_instance_method(:atime) {
-  #   "proxied inst atime #{self._atime}"
-  # }
-end
-
     #ctime
+    # mtime
+
+
     #
     # delete(file, ...)
     # unlink
@@ -48,7 +43,6 @@ end
     # 
     # lstat
     # 
-    # mtime
     # 
     # init filename, mode
     # 
@@ -81,6 +75,11 @@ end
     # zero?
   # end
   
+  # override_instance_method(:atime) {
+  #   p "in i atime"
+  #   "proxied atime #{_atime}"
+  # }
+    
   # atime
   # 
   # ctime
@@ -90,4 +89,4 @@ end
   # mtime
   # 
   # truncate
-# end
+end
