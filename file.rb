@@ -1,11 +1,13 @@
 require 'distributed.rb'
+require 'rest_client'
+require 'json'
 
 class File
   [:atime, :ctime, :mtime, :'directory?', :'exist?', :'exists?', :'file?', :'owned?', :'pipe?',
     :'readable?', :size, :'socket?', :'sticky?', :'symlink?', :'writable?', :'zero?'
     ].each do |method|
     proxy_method(method) do |file|
-      "#{file}: distributed #{method}"
+      JSON.parse RestClient.get "#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :file => file, :token => security_token}, :accept => :json}
     end
   end
 
@@ -19,8 +21,8 @@ class File
   end
   
   [:rename].each do |method|
-    proxy_method(method) do |old_name, new_name|
-      "#{old_name}: distributed rename on #{old_name} => #{new_name}"
+    proxy_method(method) do |*args|
+      JSON.parse RestClient.get "#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :args => args, :token => security_token}, :accept => :json}
     end
   end
   
@@ -78,6 +80,8 @@ end
 #      |  any of the key letters listed above except "b").
        
 class DistributedFile
+  include DistributedShelf
+
   def initialize filename, mode='r', *args
     @filename = filename
     @mode = mode
@@ -89,7 +93,7 @@ class DistributedFile
 
   [:atime, :ctime, :mtime].each do |method|
     define_method method do
-      "#{path}: distributed time #{method}"
+      JSON.parse RestClient.get "#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :file => path, :token => security_token}, :accept => :json}
     end
   end
   
