@@ -5,14 +5,14 @@ class File
     :'readable?', :size, :'socket?', :'sticky?', :'symlink?', :'writable?', :'zero?'
     ].each do |method|
     proxy_method(method) do |file|
-      "distributed #{method} on #{file}"
+      "#{file}: distributed #{method}"
     end
   end
 
   [:delete, :unlink].each do |method|
     proxy_method(method) do |*files|
       files.each do |file|
-        p "distributed remove #{method} on #{file}"
+        p "#{file}: distributed remove #{method}"
       end
       files.size
     end
@@ -20,19 +20,19 @@ class File
   
   [:rename].each do |method|
     proxy_method(method) do |old_name, new_name|
-      "distributed rename #{method} on #{old_name} => #{new_name}"
+      "#{old_name}: distributed rename on #{old_name} => #{new_name}"
     end
   end
   
   [:link, :symlink].each do |method|
     proxy_method(method) do |old_name, new_name|
-      "distributed link #{method} on #{old_name}, #{new_name}"
+      "#{old_name}: distributed link #{method} on #{old_name}, #{new_name}"
     end
   end
   
   [:lstat, :stat].each do |method|
     proxy_method(method) do |file|
-      "distributed stat info #{method} on #{args[0]}"
+      "#{file}: distributed stat info #{method} on #{file}"
     end
   end
   
@@ -46,7 +46,7 @@ class File
 
   [:truncate].each do |method|
     proxy_method(method) do |file, integer|
-      "distributed truncate #{method} on #{file} to #{integer} bytes"
+      "#{file}: distributed truncate to #{integer} bytes"
     end
   end
 end
@@ -89,32 +89,32 @@ class DistributedFile
 
   [:atime, :ctime, :mtime].each do |method|
     define_method method do
-      "distributed time #{method}"
+      "#{path}: distributed time #{method}"
     end
   end
   
   def close
-    p "closing #{path}"
+    p "#{path}: closing"
   end
 
   [:lstat, :stat].each do |method|
     define_method method do
-      "distributed stat info #{method}"
+      "#{path}: distributed stat info #{method}"
     end
   end
 
   [:truncate].each do |method|
     define_method method do |integer|
-      "distributed truncate #{method} on #{@filename} to #{integer} bytes"
+      "#{path}: distributed truncate #{method} to #{integer} bytes"
     end
   end
 
   def read length=0, *args
-    "remote read"
+    "#{path}: remote read"
   end
   
   def write string
-    "remote write #{string.length} bytes"
+    "#{path}: remote write #{string.length} bytes"
   end
   
 # File.open(filename, mode="r" [, opt]) => file
@@ -123,14 +123,11 @@ class DistributedFile
 # File.open(filename [, mode [, perm]] [, opt]) {|file| block } => obj
     
   def self.open filename, *args, &b
-    p "opening #{filename}"
     f = self.new filename, *args
     if b
-      p "block given"
       b.call(f)
       f.close
     else
-      p "bo block given"
       f
     end
   end
