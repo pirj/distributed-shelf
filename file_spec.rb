@@ -27,14 +27,16 @@ describe File, ' should work with contents' do
   it 'read files' do
     contents = File.new('/remote/file1.txt').read
     contents.size.should == 14
-    File.new('/remote/file3.txt').write contents
   end
 
   it 'write files' do
     contents = File.new('/remote/file1.txt').read
     contents.size.should == 14
+    File.exists?('/remote/file3.txt').should == false
     File.new('/remote/file3.txt', "w").write contents
+    File.exists?('/remote/file3.txt').should == true
     File.size('/remote/file3.txt').should == 14
+    File.delete('/remote/file3.txt')
   end
 end
 

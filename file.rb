@@ -1,6 +1,8 @@
 require 'distributed.rb'
 require 'rest_client'
 require 'json'
+require 'net/http/post/multipart'
+require 'mime/types'
 
 class File
   [:atime, :ctime, :mtime, :'directory?', :'exist?', :'exists?', :'file?', :'owned?', :'pipe?',
@@ -19,19 +21,19 @@ class File
       files.size
     end
   end
-  
+
   [:rename, :link, :symlink, :truncate].each do |method|
     proxy_method(method) do |*args|
       remote "#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :args => args, :token => security_token}, :accept => :json}
     end
   end
-  
+
   [:lstat, :stat].each do |method|
     proxy_method(method) do |file|
       "#{file}: distributed stat info #{method} on #{file}"
     end
   end
-  
+
   proxy_method(:new) do |*args|
     DistributedFile.new(*args)
   end
@@ -78,6 +80,16 @@ class DistributedFile
   def path
     @filename
   end
+  
+  def mimetype
+    return @mimetype if @mimetype
+    @mimetype = MIME::Types.type_for(File.basename path)
+    @mimetype = if @mimetype.empty?
+      ""
+    else
+      @mimetype[0]
+    end
+  end
 
   [:atime, :ctime, :mtime].each do |method|
     define_method method do
@@ -101,12 +113,22 @@ class DistributedFile
     end
   end
 
-  def read length=0, *args
-    "#{path}: remote read"
+  def read length=0, offset=0
+    remote "#{server_url}/read", {:params => {:length => length, :offset => offset, :pwd => Dir.pwd, :file => path, :token => security_token}, :accept => :json}
   end
   
   def write string
-    "#{path}: remote write #{string.length} bytes"
+    data = StringIO.new string
+    
+    url = URI.parse("#{server_url}/write")
+    req = Net::HTTP::Post::Multipart.new url.path,
+      :file => UploadIO.new(data, mimetype, path)
+
+    res, body = Net::HTTP.start(url.host, url.port) do |http| http.request(req) end
+    p "#{path}: remote write #{string.length} bytes"
+    p res
+    p body
+    res
   end
   
 # File.open(filename, mode="r" [, opt]) => file
