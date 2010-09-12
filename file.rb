@@ -8,8 +8,9 @@ class File
   [:atime, :ctime, :mtime, :'directory?', :'exist?', :'exists?', :'file?', :'owned?', :'pipe?',
     :'readable?', :size, :'socket?', :'sticky?', :'symlink?', :'writable?', :'zero?'
     ].each do |method|
+    method_short = method.to_s.gsub '?', '_QM'
     proxy_method(method) do |file|
-      remote "#{server_url}/class/#{method}", {:params => {:pwd => Dir.pwd, :file => file, :token => security_token}, :accept => :json}
+      remote "#{server_url}/class/#{method_short}", {:params => {:pwd => Dir.pwd, :file => file, :token => security_token}, :accept => :json}
     end
   end
 
