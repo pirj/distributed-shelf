@@ -16,10 +16,7 @@ class File
 
   [:delete, :unlink].each do |method|
     proxy_method(method) do |*files|
-      files.each do |file|
-        p "#{file}: distributed remove #{method}"
-      end
-      files.size
+      remote "#{server_url}/class/#{method}", {:params => {:pwd => Dir.pwd, :files => files, :token => security_token}, :accept => :json}
     end
   end
 

@@ -36,7 +36,6 @@ describe File, ' should work with contents' do
     File.new('/remote/file3.txt', "w").write contents
     File.exists?('/remote/file3.txt').should == true
     File.size('/remote/file3.txt').should == 14
-    File.delete('/remote/file3.txt')
   end
 end
 
@@ -50,7 +49,7 @@ describe File, ' should remove files' do
   it 'delete files' do
     File.exists?('/remote/file3.txt').should == true
     File.exists?('/remote/file4.txt').should == true
-    File.delete('/remote/file3.txt', '/remote/file4.txt')
+    File.delete('/remote/file3.txt', '/remote/file4.txt').should == 2
     File.exists?('/remote/file3.txt').should == false
     File.exists?('/remote/file4.txt').should == false
   end
