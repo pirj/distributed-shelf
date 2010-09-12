@@ -9,8 +9,8 @@ class File
     :'readable?', :size, :'socket?', :'sticky?', :'symlink?', :'writable?', :'zero?'
     ].each do |method|
     method_short = method.to_s.gsub '?', '_QM'
-    proxy_method(method) do |file|
-      remote "#{server_url}/class/#{method_short}", {:params => {:pwd => Dir.pwd, :file => file, :token => security_token}, :accept => :json}
+    proxy_method(method) do |filename|
+      remote "#{server_url}/class/#{method_short}", {:params => {:pwd => Dir.pwd, :filename => filename, :token => security_token}, :accept => :json}
     end
   end
 
@@ -94,7 +94,7 @@ class DistributedFile
 
   [:atime, :ctime, :mtime].each do |method|
     define_method method do
-      remote "#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :file => path, :token => security_token}, :accept => :json}
+      remote "#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :filename => path, :token => security_token}, :accept => :json}
     end
   end
   
@@ -115,7 +115,7 @@ class DistributedFile
   end
 
   def read length=0, offset=0
-    remote "#{server_url}/read", {:params => {:length => length, :offset => offset, :pwd => Dir.pwd, :file => path, :token => security_token}, :accept => :json}
+    remote "#{server_url}/read", {:params => {:length => length, :offset => offset, :pwd => Dir.pwd, :filename => path, :token => security_token}, :accept => :json}
   end
   
   def write string
@@ -123,12 +123,10 @@ class DistributedFile
     
     url = URI.parse("#{server_url}/write")
     req = Net::HTTP::Post::Multipart.new url.path,
-      :file => UploadIO.new(data, mimetype, path)
+      :file => UploadIO.new(data, mimetype, path),
+      :filename => path
 
     res, body = Net::HTTP.start(url.host, url.port) do |http| http.request(req) end
-    p "#{path}: remote write #{string.length} bytes"
-    p res
-    p body
     res
   end
   
