@@ -45,6 +45,10 @@ module DistributedShelf
         response['result']
       when 'Time'
         Time.parse response['result']
+      when 'FalseClass'
+        false
+      when 'TrueClass'
+        true
       else
         raise "need conversion #{response}"
       end
