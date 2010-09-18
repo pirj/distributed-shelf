@@ -58,7 +58,7 @@ module DistributedShelf
 
   def self.config= conf
     @@config = conf
-    @@config[:distributed_path] == Regexp.new('^' + @@config[:distributed_path])
+    @@config[:distributed_path] == Regexp.new('^' + @@config[:distributed_path] + '/')
   end
 
 private

@@ -110,9 +110,8 @@ class DistributedFile
   end
 
   def read length=0, offset=0
-    RestClient.get(
-      "#{server_url}/read",
-      {:params => {:length => length, :offset => offset, :pwd => Dir.pwd, :filename => path}}) do |response, request, result|
+    RestClient.get("#{server_url}#{absolutepath}",
+      {:params => {:length => length, :offset => offset}}) do |response, request, result|
         case response.code
         when 200
           response
@@ -123,10 +122,14 @@ class DistributedFile
         end        
       end
   end
-  
+
+  def absolutepath
+    File.expand_path path, Dir.pwd
+  end
+
   def write string
-    resource = RestClient::Resource.new "#{server_url}/write"
-    resource.put string, :content_type => 'image/jpg'
+    resource = RestClient::Resource.new "#{server_url}#{absolutepath}"
+    resource.put string, :content_type => mimetype
   end
   
 # File.open(filename, mode="r" [, opt]) => file
