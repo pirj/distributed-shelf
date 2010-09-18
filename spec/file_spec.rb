@@ -1,4 +1,4 @@
-require 'file'
+require 'dshelf'
 
 describe File, ' should perform operations' do
   it 'gets props from remote' do

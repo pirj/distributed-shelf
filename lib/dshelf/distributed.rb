@@ -5,10 +5,6 @@ module DistributedShelf
     'fsdgsdfgsdfv32qwg'
   end
   
-  def server_url
-    'http://localhost:9292/storage'
-  end
-  
   def override_class_method method, &b
     (class << self; self; end).class_eval do
       alias_method "_#{method.to_s}".to_sym, method

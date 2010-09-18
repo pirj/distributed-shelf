@@ -1,4 +1,3 @@
-require 'distributed.rb'
 require 'rest_client'
 require 'json'
 require 'net/http/post/multipart'
