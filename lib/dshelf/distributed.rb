@@ -23,8 +23,10 @@ module DistributedShelf
     end
   end
 
-  def remote url, params
-    response = JSON.parse RestClient.get url, params
+  def parse response_data
+    p "response_data"
+    p response_data
+    response = JSON.parse response_data
     if response['error']
       raise class_for_name(response['class']).new(response['error'])
     else
@@ -46,7 +48,7 @@ module DistributedShelf
       end
     end
   end
-
+  
   def class_for_name name
     namespaces = name.split '::'
     base = Kernel

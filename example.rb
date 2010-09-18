@@ -14,8 +14,8 @@ File.open('/remote/file1.txt', 'wb') do |file|
   file.write('writing to a new remotely stored file')
 end
 
-File.open('/remote/file1.txt', 'wb') do |file|
-  p file.read.size
-end
+# File.open('/remote/file1.txt', 'wb') do |file|
+#   p file.read.size
+# end
 
 # puts Dir.entries('/remote')

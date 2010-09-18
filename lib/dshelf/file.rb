@@ -1,6 +1,5 @@
 require 'rest_client'
 require 'json'
-require 'net/http/post/multipart'
 require 'mime/types'
 
 class File
@@ -9,19 +8,19 @@ class File
     ].each do |method|
     method_short = method.to_s.gsub '?', '_QM'
     proxy_method(method) do |filename|
-      remote "#{server_url}/class/#{method_short}", {:params => {:pwd => Dir.pwd, :filename => filename}, :accept => :json}
+      parse RestClient.get("#{server_url}/class/#{method_short}", {:params => {:pwd => Dir.pwd, :filename => filename}, :accept => :json})
     end
   end
 
   [:delete, :unlink].each do |method|
     proxy_method(method) do |*files|
-      remote "#{server_url}/class/#{method}", {:params => {:pwd => Dir.pwd, :files => files}, :accept => :json}
+      parse RestClient.get("#{server_url}/class/#{method}", {:params => {:pwd => Dir.pwd, :files => files}})
     end
   end
 
   [:rename, :link, :symlink, :truncate].each do |method|
     proxy_method(method) do |*args|
-      remote "#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :args => args}, :accept => :json}
+      parse RestClient.get("#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :args => args}})
     end
   end
 
@@ -90,12 +89,12 @@ class DistributedFile
 
   [:atime, :ctime, :mtime].each do |method|
     define_method method do
-      remote "#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :filename => path}, :accept => :json}
+      parse RestClient.get("#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :filename => path}, :accept => :json})
     end
   end
   
   def close
-    p "#{path}: closing"
+    # p "#{path}: closing"
   end
 
   [:lstat, :stat].each do |method|
@@ -111,19 +110,23 @@ class DistributedFile
   end
 
   def read length=0, offset=0
-    remote "#{server_url}/read", {:params => {:length => length, :offset => offset, :pwd => Dir.pwd, :filename => path}, :accept => :json}
+    RestClient.get(
+      "#{server_url}/read",
+      {:params => {:length => length, :offset => offset, :pwd => Dir.pwd, :filename => path}}) do |response, request, result|
+        case response.code
+        when 200
+          response
+        when 404
+          raise Errno::ENOENT
+        else
+          response.return!(request, result, &block)
+        end        
+      end
   end
   
   def write string
-    data = StringIO.new string
-    
-    url = URI.parse("#{server_url}/write")
-    req = Net::HTTP::Post::Multipart.new url.path,
-      :file => UploadIO.new(data, mimetype, path),
-      :filename => path
-
-    res, body = Net::HTTP.start(url.host, url.port) do |http| http.request(req) end
-    res
+    resource = RestClient::Resource.new "#{server_url}/write"
+    resource.put string, :content_type => 'image/jpg'
   end
   
 # File.open(filename, mode="r" [, opt]) => file
