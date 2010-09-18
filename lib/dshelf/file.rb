@@ -9,19 +9,19 @@ class File
     ].each do |method|
     method_short = method.to_s.gsub '?', '_QM'
     proxy_method(method) do |filename|
-      remote "#{server_url}/class/#{method_short}", {:params => {:pwd => Dir.pwd, :filename => filename, :token => security_token}, :accept => :json}
+      remote "#{server_url}/class/#{method_short}", {:params => {:pwd => Dir.pwd, :filename => filename}, :accept => :json}
     end
   end
 
   [:delete, :unlink].each do |method|
     proxy_method(method) do |*files|
-      remote "#{server_url}/class/#{method}", {:params => {:pwd => Dir.pwd, :files => files, :token => security_token}, :accept => :json}
+      remote "#{server_url}/class/#{method}", {:params => {:pwd => Dir.pwd, :files => files}, :accept => :json}
     end
   end
 
   [:rename, :link, :symlink, :truncate].each do |method|
     proxy_method(method) do |*args|
-      remote "#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :args => args, :token => security_token}, :accept => :json}
+      remote "#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :args => args}, :accept => :json}
     end
   end
 
@@ -69,7 +69,7 @@ end
 class DistributedFile
   include DistributedShelf
 
-  def initialize filename, mode='r', *args
+  def initialize filename, mode='r', *args, &block
     @filename = filename
     @mode = mode
   end
@@ -90,7 +90,7 @@ class DistributedFile
 
   [:atime, :ctime, :mtime].each do |method|
     define_method method do
-      remote "#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :filename => path, :token => security_token}, :accept => :json}
+      remote "#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :filename => path}, :accept => :json}
     end
   end
   
@@ -111,7 +111,7 @@ class DistributedFile
   end
 
   def read length=0, offset=0
-    remote "#{server_url}/read", {:params => {:length => length, :offset => offset, :pwd => Dir.pwd, :filename => path, :token => security_token}, :accept => :json}
+    remote "#{server_url}/read", {:params => {:length => length, :offset => offset, :pwd => Dir.pwd, :filename => path}, :accept => :json}
   end
   
   def write string

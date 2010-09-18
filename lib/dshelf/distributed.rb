@@ -1,21 +1,17 @@
 require 'time'
 
 module DistributedShelf
-  def security_token
-    'fsdgsdfgsdfv32qwg'
-  end
-  
   def override_class_method method, &b
     (class << self; self; end).class_eval do
       alias_method "_#{method.to_s}".to_sym, method
       define_method method, &b
     end
   end
-  
+
   def distributed? file
-    not File.absolute_path(file).match(/\/remote/).nil?
+    not File.absolute_path(file).match(@@config[:distributed_path]).nil?
   end
-  
+
   def proxy_method(method, &b)
     old_method = :"_#{method}"
     override_class_method(method) do |*args, &bl|
@@ -26,7 +22,7 @@ module DistributedShelf
       end
     end
   end
-  
+
   def remote url, params
     response = JSON.parse RestClient.get url, params
     if response['error']
@@ -50,12 +46,22 @@ module DistributedShelf
       end
     end
   end
-  
+
   def class_for_name name
     namespaces = name.split '::'
     base = Kernel
     namespaces.each do |namespace| base = base.const_get(namespace) end
     base
+  end
+
+  def self.config= conf
+    @@config = conf
+    @@config[:distributed_path] == Regexp.new('^' + @@config[:distributed_path])
+  end
+
+private
+  def server_url
+    @@config[:storage_url]
   end
 end
 
