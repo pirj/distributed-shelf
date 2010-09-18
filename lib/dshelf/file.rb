@@ -3,6 +3,10 @@ require 'json'
 require 'mime/types'
 
 class File
+  class Stat
+    
+  end
+  
   [:atime, :ctime, :mtime, :'directory?', :'exist?', :'exists?', :'file?', :'owned?', :'pipe?',
     :'readable?', :size, :'socket?', :'sticky?', :'symlink?', :'writable?', :'zero?'
     ].each do |method|
@@ -26,6 +30,7 @@ class File
 
   [:lstat, :stat].each do |method|
     proxy_method(method) do |file|
+      parse RestClient.get("#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :files => files}})
       "#{file}: distributed stat info #{method} on #{file}"
     end
   end
@@ -110,17 +115,18 @@ class DistributedFile
   end
 
   def read length=0, offset=0
+    params = {}
+    params[:length] = length unless length == 0
+    params[:offset] = offset unless offset == 0
     RestClient.get("#{server_url}#{absolutepath}",
-      {:params => {:length => length, :offset => offset}}) do |response, request, result|
-        case response.code
-        when 200
-          response
-        when 404
-          raise Errno::ENOENT
-        else
-          response.return!(request, result, &block)
-        end        
-      end
+      {:params => params}) do |response, request, result|
+      case response.code
+      when 200
+        response
+      when 404
+        raise Errno::ENOENT
+      end        
+    end
   end
 
   def absolutepath

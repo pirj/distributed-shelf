@@ -1,6 +1,6 @@
 # todo:remove
 $: << File.join(File.dirname(__FILE__), 'lib')
-ENV['DISTRIBUTED_SHELF_URL'] = 'http://localhost:8000/storage'
+ENV['DISTRIBUTED_SHELF_URL'] = 'http://localhost:8000/storage/g2345hg245g24g42g'
 
 # require 'rubygems'
 require 'dshelf'
@@ -10,12 +10,22 @@ DistributedShelf::config = {
   :storage_url => ENV['DISTRIBUTED_SHELF_URL']
 }
 
-File.open('/remote/file1.txt', 'wb') do |file|
+File.open('/remote/111/file1.txt', 'wb') do |file|
   file.write('writing to a new remotely stored file')
 end
 
-File.open('/remote/file1.txt', 'wb') do |file|
-  p "read:[#{file.read}]"
+File.open('/remote/111/file1.txt', 'wb') do |file|
+  p "readall:[#{file.read}]"
+end
+
+File.open('/remote/111/file1.txt', 'wb') do |file|
+  x = file.read 10
+  p "read 10:[#{x}]"
+end
+
+File.open('/remote/111/file1.txt', 'wb') do |file|
+  x = file.read 10, 3
+  p "read 10,3:[#{x}]"
 end
 
 # puts Dir.entries('/remote')
