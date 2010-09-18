@@ -1,0 +1,11 @@
+{
+  "id": "distributed_shelf",
+  "api": {
+    "config_vars": [ "DISTRIBUTED_SHELF_URL" ],
+    "username": "heroku",
+    "password": "b1EWrHYXE1R5J71D",
+    "sso_salt": "6KSqHUqw41d5kkaK",
+    "production": "https://yourapp.com/",
+    "test": "http://localhost:8000/"
+  }
+}
