@@ -1,5 +1,4 @@
 require 'rest_client'
-require 'mime/types'
 require 'dshelf/dfile'
 require 'dshelf/stat'
 
@@ -17,16 +16,16 @@ class File
   end
 
   [:atime, :ctime, :mtime, :'directory?', :'file?', :'owned?', :size, :'symlink?', :'zero?'].each do |method|
-    proxy_method(method) do |file|
-      File.stat(file).send(method)
+    proxy_method(method) do |filename|
+      File.stat(filename).send(method)
     end
   end
 
   [:'exist?', :'exists?', :delete, :unlink, :rename, :link, :symlink, :truncate].each do |method|
-    escaped_method = method.to_s.gsub '?', '_QM'
+    safe_method = method.to_s.gsub '?', '_QM'
     proxy_method(method) do |*args|
-      parse RestClient.get("#{server_url}/meta/#{escaped_method}", {:params => {:pwd => Dir.pwd, :args => args}}) #:accept => :json
-    end
+      parse RestClient.get("#{server_url}/meta/#{safe_method}", {:params => {:pwd => Dir.pwd, :args => args}})
+    end  #:accept => :json
   end
 
   [:stat, :lstat].each do |method|
