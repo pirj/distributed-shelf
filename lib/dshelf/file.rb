@@ -11,28 +11,15 @@ class File
     proxy_method(method) do |filename| false end
   end
 
-  [:'pipe?', :'readable?', :'socket?', :'sticky?', :'writable?'].each do |method|
+  [:'readable?', :'writable?'].each do |method|
     proxy_method(method) do |filename| true end
   end
 
-  [:atime, :ctime, :mtime, :'directory?', :'exist?', :'exists?', :'file?', :'owned?',
-    :'readable?', :size, :'symlink?', :'zero?'
-    ].each do |method|
-    method_short = method.to_s.gsub '?', '_QM'
-    proxy_method(method) do |filename|
-      parse RestClient.get("#{server_url}/class/#{method_short}", {:params => {:pwd => Dir.pwd, :filename => filename}, :accept => :json})
-    end
-  end
-
-  [:delete, :unlink].each do |method|
-    proxy_method(method) do |*files|
-      parse RestClient.get("#{server_url}/class/#{method}", {:params => {:pwd => Dir.pwd, :files => files}})
-    end
-  end
-
-  [:rename, :link, :symlink, :truncate].each do |method|
+  [:atime, :ctime, :mtime, :'directory?', :'exist?', :'exists?', :'file?', :'owned?', :'readable?', :size,
+    :'symlink?', :'zero?', :delete, :unlink, :rename, :link, :symlink, :truncate].each do |method|
+    escaped_method = method.to_s.gsub '?', '_QM'
     proxy_method(method) do |*args|
-      parse RestClient.get("#{server_url}/#{method}", {:params => {:pwd => Dir.pwd, :args => args}})
+      parse RestClient.get("#{server_url}/meta/#{escaped_method}", {:params => {:pwd => Dir.pwd, :args => args}}) #:accept => :json
     end
   end
 
