@@ -28,4 +28,6 @@ File.open('/remote/111/file1.txt', 'wb') do |file|
   p "read 10,3:[#{x}]"
 end
 
+p File.size('/remote/111/file1.txt')
+
 # puts Dir.entries('/remote')

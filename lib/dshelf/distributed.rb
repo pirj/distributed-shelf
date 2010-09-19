@@ -1,4 +1,5 @@
 require 'time'
+require 'json'
 
 module DistributedShelf
   def override_class_method method, &b
