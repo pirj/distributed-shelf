@@ -8,15 +8,11 @@ class File
   end
 
   [:'pipe?', :'socket?', :'sticky?'].each do |method|
-    proxy_method(method) do |filename|
-      false
-    end
+    proxy_method(method) do |filename| false end
   end
 
   [:'pipe?', :'readable?', :'socket?', :'sticky?', :'writable?'].each do |method|
-    proxy_method(method) do |filename|
-      true
-    end
+    proxy_method(method) do |filename| true end
   end
 
   [:atime, :ctime, :mtime, :'directory?', :'exist?', :'exists?', :'file?', :'owned?',

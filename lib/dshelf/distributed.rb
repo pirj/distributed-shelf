@@ -66,9 +66,3 @@ private
     @@config[:storage_url]
   end
 end
-
-class Dir
-  class << self
-    include DistributedShelf
-  end
-end
