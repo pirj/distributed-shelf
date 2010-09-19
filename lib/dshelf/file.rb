@@ -3,12 +3,24 @@ require 'json'
 require 'mime/types'
 
 class File
-  class Stat
-    
+  class << self
+    include DistributedShelf
   end
-  
-  [:atime, :ctime, :mtime, :'directory?', :'exist?', :'exists?', :'file?', :'owned?', :'pipe?',
-    :'readable?', :size, :'socket?', :'sticky?', :'symlink?', :'writable?', :'zero?'
+
+  [:'pipe?', :'socket?', :'sticky?'].each do |method|
+    proxy_method(method) do |filename|
+      false
+    end
+  end
+
+  [:'pipe?', :'readable?', :'socket?', :'sticky?', :'writable?'].each do |method|
+    proxy_method(method) do |filename|
+      true
+    end
+  end
+
+  [:atime, :ctime, :mtime, :'directory?', :'exist?', :'exists?', :'file?', :'owned?',
+    :'readable?', :size, :'symlink?', :'zero?'
     ].each do |method|
     method_short = method.to_s.gsub '?', '_QM'
     proxy_method(method) do |filename|

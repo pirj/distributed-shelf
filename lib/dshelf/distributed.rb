@@ -67,12 +67,6 @@ private
   end
 end
 
-class File
-  class << self
-    include DistributedShelf
-  end
-end
-
 class Dir
   class << self
     include DistributedShelf

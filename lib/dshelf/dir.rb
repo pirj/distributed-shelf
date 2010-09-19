@@ -1,5 +1,9 @@
 class Dir
   class << self
+    include DistributedShelf
+  end
+
+  class << self
 
     # chdir
     # 
