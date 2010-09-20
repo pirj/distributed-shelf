@@ -74,7 +74,7 @@ class DistributedFile
     params = {}
     params[:length] = length unless length == 0
     params[:offset] = offset unless offset == 0
-    RestClient.get("#{server_url}#{absolutepath}",
+    RestClient.get("#{server_url}/storage#{absolutepath}",
       {:params => params}) do |response, request, result|
       case response.code
       when 200
@@ -85,12 +85,8 @@ class DistributedFile
     end
   end
 
-  def absolutepath
-    File.expand_path path, Dir.pwd
-  end
-
   def write string
-    resource = RestClient::Resource.new "#{server_url}#{absolutepath}"
+    resource = RestClient::Resource.new "#{server_url}/storage#{absolutepath}"
     resource.put string, :content_type => mimetype
   end
   

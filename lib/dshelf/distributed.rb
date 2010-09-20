@@ -49,7 +49,11 @@ module DistributedShelf
       end
     end
   end
-  
+
+  def absolutepath
+    File.expand_path path, Dir.pwd
+  end
+
   def class_for_name name
     namespaces = name.split '::'
     base = Kernel
@@ -62,7 +66,6 @@ module DistributedShelf
     @@config[:distributed_path] == Regexp.new('^' + @@config[:distributed_path] + '/')
   end
 
-private
   def server_url
     @@config[:storage_url]
   end

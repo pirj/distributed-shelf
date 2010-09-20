@@ -25,7 +25,7 @@ class File
     safe_method = method.to_s.gsub '?', '_QM'
     proxy_method(method) do |*args|
       parse RestClient.get("#{server_url}/meta/#{safe_method}", {:params => {:pwd => Dir.pwd, :args => args}})
-    end  #:accept => :json
+    end
   end
 
   [:stat, :lstat].each do |method|

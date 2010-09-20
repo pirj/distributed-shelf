@@ -1,3 +1,5 @@
+require 'dshelf'
+
 class File
   class Stat
     class << self
@@ -18,12 +20,27 @@ end
 
 class File
   class DistributedStat
-    def initialize filename
-      @filename = filename
+    include DistributedShelf
+    class << self
+      include DistributedShelf
     end
 
-    def method_missing method
-      raise "Distributed File::Stat error: #{method} not implemented"
+    def initialize filename
+      # todo: FIX!!! need to come from DShelf
+      absolutepath = File.expand_path filename, Dir.pwd
+
+      RestClient.get("#{server_url}/stat#{absolutepath}", {:accept => :json}) do |response, request, result|
+        case response.code
+        when 200
+          response
+        when 404
+          raise Errno::ENOENT
+        end
+      end
     end
+
+    # def method_missing method
+    #   raise "Distributed File::Stat error: #{method} not implemented"
+    # end
   end
 end
