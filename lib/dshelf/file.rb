@@ -3,9 +3,8 @@ require 'dshelf/dfile'
 require 'dshelf/stat'
 
 class File
-  class << self
-    include DistributedShelf
-  end
+  class << self; include DistributedShelf end
+  def absolutepath; File.expand_path path, Dir.pwd end
 
   [:'pipe?', :'socket?', :'sticky?'].each do |method|
     proxy_method(method) do |filename| false end
@@ -30,7 +29,7 @@ class File
 
   [:stat, :lstat].each do |method|
     proxy_method(method) do |filename|
-      DistributedStat.new(filename)
+      Stat.new(filename)
     end
   end
 
