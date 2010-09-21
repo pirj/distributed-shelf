@@ -22,11 +22,15 @@ class DistributedStat
   
   def parse_stat stat
     parsed = JSON.parse stat
+    # p "dstat of #{@dpath} is #{parsed}"
     @dstat = {}
     @dstat[:size] = parsed['size']
     @dstat[:atime] = Time.parse parsed['atime']
     @dstat[:ctime] = Time.parse parsed['ctime']
     @dstat[:mtime] = Time.parse parsed['mtime']
+    @dstat[:is_file] = parsed['is_file']
+    @dstat[:is_dir] = parsed['is_dir']
+    @dstat[:is_regular] = parsed['is_regular']
   end
 
   def setgid?; true end
@@ -34,6 +38,10 @@ class DistributedStat
 
   def size
     @dstat[:size]
+  end
+  
+  def zero?
+    size == 0
   end
   
   def atime
@@ -48,16 +56,41 @@ class DistributedStat
     @dstat[:mtime]
   end
 
-    # atime   blksize   blockdev?   blocks   chardev?   ctime   dev   
-    # dev_major   dev_minor   directory?   executable?   executable_real?
-    # file?   ftype   gid   grpowned?   ino   inspect   mode   mtime   new
-    # nlink   owned?   pipe?   pretty_print   rdev   rdev_major   rdev_minor
-    # readable?   readable_real?      size   size?   socket?
-    # sticky?   symlink?   uid   writable?   writable_real?   zero? 
+  def <=> stat
+    mtime <=> stat.mtime
+  end
 
-  # def method_missing method
-  #   raise "Distributed File::Stat error: #{method} not implemented"
-  # end
+  [:'pipe?', :'socket?', :'sticky?', :'blockdev?', :'chardev?', :'executable?', :'executable_real?'].each do |method|
+    define_method(method) do || false end
+  end
+
+  [:blksize, :blocks].each do |method|
+    define_method(method) do || nil end
+  end
+  
+  def file?
+    @dstat[:is_regular]
+  end
+  
+  def directory?
+    @dstat[:is_dir]
+  end
+  
+  def symlink?
+    not @dstat[:is_file]
+  end
+  
+  def ftype
+    return 'link' if symlink?
+    return 'directory' if directory?
+    'file'
+  end
+
+    # dev   dev_major   dev_minor   
+    #       gid   grpowned?   ino   inspect   mode
+    # nlink   owned?   pretty_print   rdev   rdev_major   rdev_minor
+    # readable?   readable_real?
+    #    uid   writable?   writable_real? 
 end
 
 class File

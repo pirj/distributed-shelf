@@ -29,9 +29,18 @@ File.open('/remote/111/file1.txt') do |file|
 end
 
 p "size=#{File.size('/remote/111/file1.txt')}"
+
 stat = File.stat('/remote/111/file1.txt')
+p "zero?: #{stat.zero?}"
 p "atime: #{stat.atime}"
 p "ctime: #{stat.ctime}"
 p "mtime: #{stat.mtime}"
+p "file?: #{stat.file?}"
+p "directory?: #{stat.directory?}"
+p "symlink?: #{stat.symlink?}"
+
+p "file?: #{File.file?('/remote/111')}"
+p "directory?: #{File.directory?('/remote/111')}"
+p "symlink?: #{File.symlink?('/remote/111')}"
 
 # puts Dir.entries('/remote')
