@@ -19,12 +19,13 @@ class DistributedStat
       end
     end
   end
-  
+
   def parse_stat stat
     parsed = JSON.parse stat
-    # p "dstat of #{@dpath} is #{parsed}"
     @dstat = {}
     @dstat[:size] = parsed['size']
+    @dstat[:readable] = !parsed['access'].match(/read/).nil?
+    @dstat[:writable] = !parsed['access'].match(/write/).nil?
     @dstat[:atime] = Time.parse parsed['atime']
     @dstat[:ctime] = Time.parse parsed['ctime']
     @dstat[:mtime] = Time.parse parsed['mtime']
@@ -39,11 +40,11 @@ class DistributedStat
   def size
     @dstat[:size]
   end
-  
+
   def zero?
     size == 0
   end
-  
+
   def atime
     @dstat[:atime]
   end
@@ -67,30 +68,37 @@ class DistributedStat
   [:blksize, :blocks].each do |method|
     define_method(method) do || nil end
   end
-  
+
   def file?
     @dstat[:is_regular]
   end
-  
+
   def directory?
     @dstat[:is_dir]
   end
-  
+
   def symlink?
     not @dstat[:is_file]
   end
-  
+
   def ftype
     return 'link' if symlink?
     return 'directory' if directory?
     'file'
   end
 
-    # dev   dev_major   dev_minor   
+  [:'readable?', :'readable_real?'].each do |method|
+    define_method(method) do || @dstat[:readable] end
+  end
+
+  [:'writable?', :'writable_real?'].each do |method|
+    define_method(method) do || @dstat[:writable] end
+  end
+
+    # dev   dev_major   dev_minor
     #       gid   grpowned?   ino   inspect   mode
     # nlink   owned?   pretty_print   rdev   rdev_major   rdev_minor
-    # readable?   readable_real?
-    #    uid   writable?   writable_real? 
+    #    uid   
 end
 
 class File

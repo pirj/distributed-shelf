@@ -10,11 +10,8 @@ class File
     proxy_method(method) do |filename| false end
   end
 
-  [:'readable?', :'writable?'].each do |method|
-    proxy_method(method) do |filename| true end
-  end
-
-  [:atime, :ctime, :mtime, :'directory?', :'file?', :'owned?', :size, :'symlink?', :'zero?'].each do |method|
+  [:atime, :ctime, :mtime, :'directory?', :'file?', :'owned?', :size, :'symlink?', :'zero?',
+    :'readable?', :'writable?', :'readable_real?', :'writable_real?'].each do |method|
     proxy_method(method) do |filename|
       File.stat(filename).send(method)
     end

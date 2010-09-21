@@ -38,9 +38,13 @@ p "mtime: #{stat.mtime}"
 p "file?: #{stat.file?}"
 p "directory?: #{stat.directory?}"
 p "symlink?: #{stat.symlink?}"
+p "readable?: #{stat.readable?}"
+p "writable?: #{stat.writable?}"
 
 p "file?: #{File.file?('/remote/111')}"
 p "directory?: #{File.directory?('/remote/111')}"
 p "symlink?: #{File.symlink?('/remote/111')}"
+p "readable?: #{File.readable?('/remote/111')}"
+p "writable?: #{File.writable?('/remote/111')}"
 
 # puts Dir.entries('/remote')
