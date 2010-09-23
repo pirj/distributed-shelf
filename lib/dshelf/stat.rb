@@ -65,8 +65,12 @@ class DistributedStat
     define_method(method) do || false end
   end
 
-  [:blksize, :blocks].each do |method|
+  [:blksize, :blocks, :dev, :dev_minor, :dev_major, :rdev, :rdev_minor, :rdev_major, :uid, :gid, :ino].each do |method|
     define_method(method) do || nil end
+  end
+
+  [:'grpowned?', :'owned?'].each do |method|
+    define_method(method) do || true end
   end
 
   def file?
@@ -95,10 +99,7 @@ class DistributedStat
     define_method(method) do || @dstat[:writable] end
   end
 
-    # dev   dev_major   dev_minor
-    #       gid   grpowned?   ino   inspect   mode
-    # nlink   owned?   pretty_print   rdev   rdev_major   rdev_minor
-    #    uid   
+    # todo:   mode nlink
 end
 
 class File
