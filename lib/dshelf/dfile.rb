@@ -60,7 +60,7 @@ class DistributedFile
 
   [:lstat, :stat].each do |method|
     define_method method do
-      "#{path}: distributed stat info #{method}"
+      DistributedStat.new path
     end
   end
 

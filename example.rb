@@ -41,6 +41,17 @@ p "symlink?: #{stat.symlink?}"
 p "readable?: #{stat.readable?}"
 p "writable?: #{stat.writable?}"
 
+stat = File.new('/remote/111/file1.txt').stat
+p "zero?: #{stat.zero?}"
+p "atime: #{stat.atime}"
+p "ctime: #{stat.ctime}"
+p "mtime: #{stat.mtime}"
+p "file?: #{stat.file?}"
+p "directory?: #{stat.directory?}"
+p "symlink?: #{stat.symlink?}"
+p "readable?: #{stat.readable?}"
+p "writable?: #{stat.writable?}"
+
 p "file?: #{File.file?('/remote/111')}"
 p "directory?: #{File.directory?('/remote/111')}"
 p "symlink?: #{File.symlink?('/remote/111')}"
