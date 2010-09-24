@@ -10,6 +10,9 @@ DistributedShelf::config = {
   :storage_url => ENV['DISTRIBUTED_SHELF_URL']
 }
 
+
+p File.exists?('/remote/111/file2.txt')
+
 File.open('/remote/111/file1.txt', 'wb') do |file|
   file.write('writing to a new remotely stored file')
 end
@@ -29,6 +32,10 @@ File.open('/remote/111/file1.txt') do |file|
 end
 
 p "size=#{File.size('/remote/111/file1.txt')}"
+
+p File.truncate('/remote/111/file1.txt', 20)
+p "size=#{File.size('/remote/111/file1.txt')}"
+p File.new('/remote/111/file1.txt', 'rb').read
 
 stat = File.stat('/remote/111/file1.txt')
 p "zero?: #{stat.zero?}"

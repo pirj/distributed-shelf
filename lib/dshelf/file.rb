@@ -17,10 +17,22 @@ class File
     end
   end
 
-  [:'exist?', :'exists?', :delete, :unlink, :rename, :link, :symlink, :truncate].each do |method|
+  [:'exist?', :'exists?', :delete, :unlink, :rename, :link, :symlink].each do |method|
     safe_method = method.to_s.gsub '?', '_QM'
     proxy_method(method) do |*args|
-      parse RestClient.get("#{server_url}/meta/#{safe_method}", {:params => {:pwd => Dir.pwd, :args => args}})
+      RestClient.get("#{server_url}/meta", {:params => {:method => safe_method, :pwd => Dir.pwd, :args => args}})
+    end
+  end
+
+  proxy_method(:truncate) do |filename, size|
+    absolutepath = File.expand_path filename, Dir.pwd
+    RestClient.get("#{server_url}/truncate#{absolutepath}", {:params => {:size => size}}) do |response, request, result|
+      case response.code
+      when 200
+        0
+      when 404
+        raise Errno::ENOENT
+      end        
     end
   end
 
