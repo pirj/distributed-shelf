@@ -17,10 +17,28 @@ class File
     end
   end
 
-  [:'exist?', :'exists?', :delete, :unlink, :rename, :link, :symlink].each do |method|
-    safe_method = method.to_s.gsub '?', '_QM'
+  [:'exist?', :'exists?'].each do |method|
+    proxy_method(method) do |filename|
+      begin
+        File.stat(filename)
+        true
+      rescue
+        false
+      end
+    end
+  end
+  
+  [:delete, :unlink].each do |method|
     proxy_method(method) do |*args|
-      RestClient.get("#{server_url}/meta", {:params => {:method => safe_method, :pwd => Dir.pwd, :args => args}})
+      args = args.map do |filename| File.expand_path(filename, Dir.pwd) end
+      RestClient.get("#{server_url}/meta", {:params => {:method => method, :args => args}})
+    end
+  end
+  
+  [:rename, :link, :symlink].each do |method|
+    proxy_method(method) do |*args|
+      args = args.map do |filename| File.expand_path(filename, Dir.pwd) end
+      RestClient.get("#{server_url}/meta", {:params => {:method => method, :args => args}})
     end
   end
 

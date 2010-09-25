@@ -10,12 +10,13 @@ DistributedShelf::config = {
   :storage_url => ENV['DISTRIBUTED_SHELF_URL']
 }
 
-
-p File.exists?('/remote/111/file2.txt')
+p "nonexisting exists? #{File.exists?('/remote/111/file2.txt')}"
 
 File.open('/remote/111/file1.txt', 'wb') do |file|
   file.write('writing to a new remotely stored file')
 end
+
+p "existing exists? #{File.exists?('/remote/111/file1.txt')}"
 
 File.open('/remote/111/file1.txt') do |file|
   p "readall:[#{file.read}]"
@@ -64,5 +65,8 @@ p "directory?: #{File.directory?('/remote/111')}"
 p "symlink?: #{File.symlink?('/remote/111')}"
 p "readable?: #{File.readable?('/remote/111')}"
 p "writable?: #{File.writable?('/remote/111')}"
+
+p "removing : #{File.delete('/remote/111/file1.txt')}"
+p "exists? #{File.exists?('/remote/111/file1.txt')}"
 
 # puts Dir.entries('/remote')
