@@ -31,14 +31,28 @@ class File
   [:delete, :unlink].each do |method|
     proxy_method(method) do |*args|
       args = args.map do |filename| File.expand_path(filename, Dir.pwd) end
-      RestClient.get("#{server_url}/meta", {:params => {:method => method, :args => args}})
+      RestClient.get("#{server_url}/meta", {:params => {:method => method, :args => args}}) do |response, request, result|
+        case response.code
+        when 200
+          args.size
+        when 404
+          raise Errno::ENOENT
+        end        
+      end        
     end
   end
   
   [:rename, :link, :symlink].each do |method|
     proxy_method(method) do |*args|
       args = args.map do |filename| File.expand_path(filename, Dir.pwd) end
-      RestClient.get("#{server_url}/meta", {:params => {:method => method, :args => args}})
+      RestClient.get("#{server_url}/meta", {:params => {:method => method, :args => args}}) do |response, request, result|
+        case response.code
+        when 200
+          0
+        when 404
+          raise Errno::ENOENT
+        end        
+      end        
     end
   end
 

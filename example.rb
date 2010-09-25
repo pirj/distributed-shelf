@@ -66,7 +66,11 @@ p "symlink?: #{File.symlink?('/remote/111')}"
 p "readable?: #{File.readable?('/remote/111')}"
 p "writable?: #{File.writable?('/remote/111')}"
 
-p "removing : #{File.delete('/remote/111/file1.txt')}"
-p "exists? #{File.exists?('/remote/111/file1.txt')}"
+p "rename : #{File.rename('/remote/111/file1.txt', '/remote/111/file2.txt')}"
+p "original exists? #{File.exists?('/remote/111/file1.txt')}" # false
+p "new exists? #{File.exists?('/remote/111/file2.txt')}" # true
+
+p "removing : #{File.delete('/remote/111/file2.txt')}"
+p "exists? #{File.exists?('/remote/111/file2.txt')}"
 
 # puts Dir.entries('/remote')
