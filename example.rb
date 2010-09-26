@@ -94,7 +94,7 @@ p "link exists? #{File.exists?('/remote/111/file3.txt')}" # true
 p "creating symlink #{File.symlink('/remote/111/file2.txt', '/remote/111/file4.txt')}"
 p "symlink exists? #{File.exists?('/remote/111/file4.txt')}" # true
 
-p "removing : #{File.delete('/remote/111/file2.txt', '/remote/111/file3.txt', '/remote/111/file4.txt')}"
+p "removing : #{File.delete('/remote/111/file4.txt', '/remote/111/file3.txt', '/remote/111/file2.txt')}"
 p "exists? #{File.exists?('/remote/111/file2.txt')}"
 p "exists? #{File.exists?('/remote/111/file3.txt')}"
 p "exists? #{File.exists?('/remote/111/file4.txt')}"
