@@ -10,6 +10,21 @@ DistributedShelf::config = {
   :storage_url => ENV['DISTRIBUTED_SHELF_URL']
 }
 
+p "Dir.pwd #{Dir.pwd}"
+p "Dir.mkdir local #{Dir.mkdir('/tmp/1')}"
+p "Dir.mkdir remote #{Dir.mkdir('/remote/111/')}"
+
+p "entries local #{Dir.entries('/tmp/1')}"
+p "entries remote #{Dir.entries('/remote/111/')}"
+
+p "Dir.chdir remote #{Dir.chdir('/remote/111/')}"
+p "Dir.pwd #{Dir.pwd}"
+p "Dir.chdir local #{Dir.chdir('/tmp')}"
+
+p "Dir.rmdir local #{Dir.rmdir('/tmp/1')}"
+p "Dir.rmdir remote #{Dir.rmdir('/remote/111/')}"
+
+
 p "nonexisting exists? #{File.exists?('/remote/111/file2.txt')}"
 
 File.open('/remote/111/file1.txt', 'wb') do |file|
