@@ -1,11 +1,26 @@
 {
   "id": "distributed_shelf",
+  "name": "DistributedShelf",
+  "plans": [
+    {
+      "id": "free",
+      "name": "Free",
+      "price": "0",
+      "price_unit": "month"
+    },
+    {
+      "id": "basic",
+      "name": "basic",
+      "price": "5",
+      "price_unit": "month"
+    }
+  ],
   "api": {
     "config_vars": [ "DISTRIBUTED_SHELF_URL" ],
     "username": "heroku",
     "password": "b1EWrHYXE1R5J71D",
     "sso_salt": "6KSqHUqw41d5kkaK",
-    "production": "https://yourapp.com/",
+    "production": "https://distributedshelf.com/",
     "test": "http://localhost:8000/"
   }
 }
