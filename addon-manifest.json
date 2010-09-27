@@ -2,16 +2,19 @@
   "id": "distributed_shelf",
   "name": "DistributedShelf",
   "plans": [
-    {
-      "id": "free",
-      "name": "Free",
+    { "id": "x0",
+      "name": "Free: 10MB",
       "price": "0",
       "price_unit": "month"
     },
-    {
-      "id": "basic",
-      "name": "basic",
+    { "id": "x1",
+      "name": "1x: 500MB",
       "price": "5",
+      "price_unit": "month"
+    },
+    { "id": "x10",
+      "name": "10x: 5GB",
+      "price": "15",
       "price_unit": "month"
     }
   ],
