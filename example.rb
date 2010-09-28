@@ -1,6 +1,6 @@
 # todo:remove
 $: << File.join(File.dirname(__FILE__), 'lib')
-ENV['DISTRIBUTED_SHELF_URL'] = 'http://localhost:8000/storage/d1988941afc473f4ccb123b4106aff6d'
+ENV['DISTRIBUTED_SHELF_URL'] = 'http://localhost:8000/storage/3470e95cc331a9f9eea163f5f41e9483'
 
 # require 'rubygems'
 require 'dshelf'
