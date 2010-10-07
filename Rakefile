@@ -16,8 +16,15 @@ begin
     gemspec.email = "pirj@mail.ru"
     gemspec.homepage = "http://distributedshelf.com"
     gemspec.authors = ["Phil Pirozhkov"]
+    
+    gemspec.files = [
+      'lib/dshelf.rb',
+      'lib/dshelf/dfile.rb',
+      'lib/dshelf/dir.rb',
+      'lib/dshelf/file.rb',
+      'lib/dshelf/stat.rb'
+      ]
 
-    # gemspec.add_development_dependency(%q<turn>, [">= 0"])
     gemspec.add_dependency(%q<rest-client>, ["~> 1.4.0"])
     gemspec.add_dependency(%q<json>, ["~> 1.2.0"])
     gemspec.add_dependency(%q<multipart-post>, ["~> 1.0.0"])

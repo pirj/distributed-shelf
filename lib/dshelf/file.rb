@@ -1,6 +1,4 @@
 require 'rest_client'
-require 'dshelf/dfile'
-require 'dshelf/stat'
 
 class File
   class << self; include DistributedShelf end
