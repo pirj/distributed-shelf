@@ -1,5 +1,5 @@
 module DistributedShelf
-  VERSION = '0.1'
+  VERSION = '0.2'
 
   @@config = {}
   

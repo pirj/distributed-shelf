@@ -25,9 +25,8 @@ begin
       'lib/dshelf/stat.rb'
       ]
 
-    gemspec.add_dependency(%q<rest-client>, ["~> 1.4.0"])
+    gemspec.add_dependency(%q<rest-client>, ["~> 1.6.1"])
     gemspec.add_dependency(%q<json>, ["~> 1.2.0"])
-    gemspec.add_dependency(%q<multipart-post>, ["~> 1.0.0"])
     gemspec.add_dependency(%q<mime-types>, ["~> 1.0"])
 
     gemspec.version = DistributedShelf::VERSION

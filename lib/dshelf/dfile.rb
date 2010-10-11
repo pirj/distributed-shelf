@@ -86,8 +86,7 @@ class DistributedFile
   end
 
   def write string
-    resource = RestClient::Resource.new "#{server_url}/storage#{absolutepath}"
-    resource.put string, :content_type => mimetype
+    RestClient.put "#{server_url}/storage#{absolutepath}", string, :content_type => mimetype
   end
   
 # File.open(filename, mode="r" [, opt]) => file
