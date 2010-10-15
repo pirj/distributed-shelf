@@ -11,7 +11,7 @@ module DistributedShelf
   end
 
   def distributed? file
-    @@config[:distributed_path] and not File.absolute_path(file).match(@@config[:distributed_path]).nil?
+    @@config[:distributed_path] and not File.expand_path(file).match(@@config[:distributed_path]).nil?
   end
 
   def proxy_method(method, &b)
