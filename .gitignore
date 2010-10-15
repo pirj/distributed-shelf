@@ -1,3 +1,4 @@
 pkg
 dshelf.gemspec
 dshelf-0.1.gem
+*.gem
