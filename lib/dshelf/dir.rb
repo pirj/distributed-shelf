@@ -1,3 +1,5 @@
+require 'json'
+
 class Dir
   class << self; include DistributedShelf end
 
@@ -31,7 +33,15 @@ class Dir
   end
 
   proxy_method(:entries) do |dir|
-    p "remote entries"
+    dir = File.expand_path(dir, Dir.pwd)
+    RestClient.get("#{server_url}/dir#{dir}", {:params => {:method => :entries}, :accept => :json}) do |response, request, result|
+      case response.code
+      when 200
+        JSON.parse response
+      when 404
+        raise Errno::ENOENT
+      end
+    end
   end
 
   proxy_method(:mkdir) do |dir|
