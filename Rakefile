@@ -1,36 +1,8 @@
-desc 'Specs'
-task :specs do
-  p "spec"
-end
+gem "rest-client"
+gem "json"
+gem "mime-types"
 
-task :default => :specs
-
-begin
-  $: << File.join(File.dirname(__FILE__), 'lib')
-  require 'jeweler'
-  require 'dshelf'
-  Jeweler::Tasks.new do |gemspec|
-    gemspec.name = "dshelf"
-    gemspec.summary = ""
-    gemspec.description = ""
-    gemspec.email = "pirj@mail.ru"
-    gemspec.homepage = "http://distributedshelf.com"
-    gemspec.authors = ["Phil Pirozhkov"]
-    
-    gemspec.files = [
-      'lib/dshelf.rb',
-      'lib/dshelf/dfile.rb',
-      'lib/dshelf/dir.rb',
-      'lib/dshelf/file.rb',
-      'lib/dshelf/stat.rb'
-      ]
-
-    gemspec.add_dependency(%q<rest-client>, ["~> 1.6.1"])
-    gemspec.add_dependency(%q<json>, ["~> 1.2.0"])
-    gemspec.add_dependency(%q<mime-types>, ["~> 1.0"])
-
-    gemspec.version = DistributedShelf::VERSION
-  end
-rescue LoadError
-  puts "Jeweler not available. Install it with: gem install jeweler"
+group :test do
+  gem "rake"
+  gem "rspec"
 end
