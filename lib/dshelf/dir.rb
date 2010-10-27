@@ -27,8 +27,14 @@ class Dir
   
   [:delete, :rmdir, :unlink].each do |method|
     proxy_method(method) do |dir|
-      p "remote rmdir"
-      0
+      RestClient.delete("#{server_url}/dir#{dir}") do |response, request, result|
+        case response.code
+        when 202
+          0
+        when 204
+          raise Errno::ENOENT
+        end
+      end
     end
   end
 
@@ -45,10 +51,16 @@ class Dir
   end
 
   proxy_method(:mkdir) do |dir|
-    p "remote mkdir"
+    RestClient.put("#{server_url}/dir#{dir}", "mkdir") do |response, request, result|
+      p response.code
+      case response.code
+      when 201
+        0
+      when 404
+        raise Errno::ENOENT
+      end
+    end
   end
-
-
 
     # foreach(dirname, &b)
     # 
