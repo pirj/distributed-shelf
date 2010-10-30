@@ -5,8 +5,8 @@ class Dir
 
   override_class_method(:chdir) do |dir|
     if distributed? dir
-      p "remote chdir"
       @@dpwd = dir
+      0
     else
       @@dpwd = ''
       Dir._chdir dir
@@ -17,7 +17,6 @@ class Dir
   [:getwd, :pwd].each do |method|
     override_class_method(method) do
       if distributed? @@dpwd
-        p "remote pwd"
         @@dpwd
       else
         Dir._pwd

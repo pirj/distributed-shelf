@@ -26,10 +26,10 @@ describe Dir, ' remote' do
   end
 
   it 'changes pwd' do
-    Dir.chdir('/remote/111/').should == '/remote/111/'
+    Dir.chdir('/remote/111/').should == 0
     Dir.pwd.should == '/remote/111/'
-    Dir.chdir('/tmp').should == '/tmp'
-    Dir.pwd.should == '/tmp'
+    Dir.chdir('/usr').should == 0
+    Dir.pwd.should == '/usr'
   end
 
   it 'stat' do
@@ -133,7 +133,7 @@ end
 
 describe Dir, ' entries' do
   it 'get entries' do
-    Dir.entries('/remote/111').should == ['.', '..', 'file2.txt', 'file3.txt', 'file4.txt']
+    (Dir.entries('/remote/111') - ['.', '..', 'file2.txt', 'file3.txt', 'file4.txt']).should == []
   end
 end
 
@@ -142,7 +142,7 @@ describe File, ' removal' do
     File.exists?('/remote/111/file2.txt').should == true
     File.exists?('/remote/111/file3.txt').should == true
     File.exists?('/remote/111/file4.txt').should == true
-    File.delete('/remote/111/file4.txt', '/remote/111/file3.txt', '/remote/111/file2.txt').should == true
+    File.delete('/remote/111/file4.txt', '/remote/111/file3.txt', '/remote/111/file2.txt').should == 3
     File.exists?('/remote/111/file2.txt').should == false
     File.exists?('/remote/111/file3.txt').should == false
     File.exists?('/remote/111/file4.txt').should == false
@@ -154,6 +154,8 @@ describe Dir, ' removal' do
     File.exists?('/remote/111/').should == true
     Dir.rmdir('/remote/111/').should == 0
     File.exists?('/remote/111/').should == false
+    Dir.rmdir('/remote').should == 0
+    File.exists?('/remote').should == false
   end
   
   it 'refuses removal of non-existing dirs' do

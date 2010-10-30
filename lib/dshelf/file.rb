@@ -49,8 +49,8 @@ class File
           0
         when 404
           raise Errno::ENOENT
-        end        
-      end        
+        end
+      end
     end
   end
 
