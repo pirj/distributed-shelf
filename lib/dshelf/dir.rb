@@ -32,6 +32,8 @@ class Dir
         when 202
           0
         when 204
+          0
+        when 404
           raise Errno::ENOENT
         end
       end
@@ -40,7 +42,7 @@ class Dir
 
   proxy_method(:entries) do |dir|
     dir = File.expand_path(dir, Dir.pwd)
-    RestClient.get("#{server_url}/dir#{dir}", {:params => {:method => :entries}, :accept => :json}) do |response, request, result|
+    RestClient.get("#{server_url}/dir#{dir}", {:accept => :json}) do |response, request, result|
       case response.code
       when 200
         JSON.parse response
@@ -51,13 +53,12 @@ class Dir
   end
 
   proxy_method(:mkdir) do |dir|
-    RestClient.put("#{server_url}/dir#{dir}", "mkdir") do |response, request, result|
-      p response.code
+    RestClient.put("#{server_url}/dir#{dir}", '') do |response, request, result|
       case response.code
-      when 201
+      when 204
         0
-      when 404
-        raise Errno::ENOENT
+      when 409
+        raise Errno::EEXIST
       end
     end
   end
