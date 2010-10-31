@@ -56,6 +56,8 @@ class Dir
       case response.code
       when 204
         0
+      when 402
+        raise Errno::ENOSPC
       when 409
         raise Errno::EEXIST
       end

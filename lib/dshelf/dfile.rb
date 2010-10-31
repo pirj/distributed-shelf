@@ -74,22 +74,31 @@ class DistributedFile
     params = {}
     params[:length] = length unless length == 0
     params[:offset] = offset unless offset == 0
+    HTTPClient.new
     RestClient.get("#{server_url}/storage#{URI.escape absolutepath}",
       {:params => params}) do |response, request, result|
       case response.code
       when 200
         response
+      when 402
+        raise Errno::ENOSPC
       when 404
         raise Errno::ENOENT
-      end        
+      end
     end
   end
 
   def write string
-    RestClient.put "#{server_url}/storage#{URI.escape absolutepath}", string, :content_type => mimetype
-    string.size
+    RestClient.put "#{server_url}/storage#{URI.escape absolutepath}", string, :content_type => mimetype do
+      case response.code
+      when 204
+        string.size
+      when 402
+        raise Errno::ENOSPC
+      end
+    end
   end
-  
+
 # File.open(filename, mode="r" [, opt]) => file
 # File.open(filename [, mode [, perm]] [, opt]) => file
 # File.open(filename, mode="r" [, opt]) {|file| block } => obj

@@ -33,6 +33,8 @@ class File
         case response.code
         when 200
           args.size
+        when 402
+          raise Errno::ENOSPC
         when 404
           raise Errno::ENOENT
         end        
@@ -47,6 +49,8 @@ class File
         case response.code
         when 200
           0
+        when 402
+          raise Errno::ENOSPC
         when 404
           raise Errno::ENOENT
         end
@@ -60,6 +64,8 @@ class File
       case response.code
       when 200
         0
+      when 402
+        raise Errno::ENOSPC
       when 404
         raise Errno::ENOENT
       end        
