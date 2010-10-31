@@ -24,6 +24,7 @@ For every environment where used:
         :storage_url => ENV['DISTRIBUTED_SHELF_URL']
       }
     end
+    Dir.mkdir '/remote'
 
 Deploying to Heroku
 -------------------

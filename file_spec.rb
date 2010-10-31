@@ -1,14 +1,14 @@
 $: << File.join(File.dirname(__FILE__), 'lib')
 require 'dshelf'
 
-ENV['DISTRIBUTED_SHELF_URL'] = 'http://localhost:8000/storage/3470e95cc331a9f9eea163f5f41e9483'
+ENV['DISTRIBUTED_SHELF_URL'] = 'https://distributedshelf.com/storage/ce484f8563ebe0aeb0147a02532ac9a3'
+#'http://localhost:8000/storage/3470e95cc331a9f9eea163f5f41e9483'
+# Dir.rmdir('/tmp/storage/3470e95cc331a9f9eea163f5f41e9483/remote') if File.exists?('/tmp/storage/3470e95cc331a9f9eea163f5f41e9483/remote')
 
 DistributedShelf::config = {
   :distributed_path => '/remote',
   :storage_url => ENV['DISTRIBUTED_SHELF_URL']
 }
-
-Dir.rmdir('/tmp/storage/3470e95cc331a9f9eea163f5f41e9483/remote') if File.exists?('/tmp/storage/3470e95cc331a9f9eea163f5f41e9483/remote')
 
 describe Dir, ' does not affect local file system' do
   it 'creates/removes dir' do
