@@ -9,7 +9,7 @@ class DistributedStat
 
   def initialize filename
     @dpath = filename
-    RestClient.get("#{server_url}/stat#{absolutepath}", {:accept => :json}) do |response, request, result|
+    RestClient.get("#{server_url}/stat#{URI.escape absolutepath}", {:accept => :json}) do |response, request, result|
       case response.code
       when 200
         parse_stat response

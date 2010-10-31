@@ -56,7 +56,7 @@ class File
 
   proxy_method(:truncate) do |filename, size|
     absolutepath = File.expand_path filename, Dir.pwd
-    RestClient.get("#{server_url}/truncate#{absolutepath}", {:params => {:size => size}}) do |response, request, result|
+    RestClient.get("#{server_url}/truncate#{URI.escape absolutepath}", {:params => {:size => size}}) do |response, request, result|
       case response.code
       when 200
         0

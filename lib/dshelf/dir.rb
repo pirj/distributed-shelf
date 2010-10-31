@@ -26,7 +26,7 @@ class Dir
   
   [:delete, :rmdir, :unlink].each do |method|
     proxy_method(method) do |dir|
-      RestClient.delete("#{server_url}/dir#{dir}") do |response, request, result|
+      RestClient.delete("#{server_url}/dir#{URI.escape dir}") do |response, request, result|
         case response.code
         when 202
           0
@@ -41,7 +41,7 @@ class Dir
 
   proxy_method(:entries) do |dir|
     dir = File.expand_path(dir, Dir.pwd)
-    RestClient.get("#{server_url}/dir#{dir}", {:accept => :json}) do |response, request, result|
+    RestClient.get("#{server_url}/dir#{URI.escape dir}", {:accept => :json}) do |response, request, result|
       case response.code
       when 200
         JSON.parse response
@@ -52,7 +52,7 @@ class Dir
   end
 
   proxy_method(:mkdir) do |dir|
-    RestClient.put("#{server_url}/dir#{dir}", '') do |response, request, result|
+    RestClient.put("#{server_url}/dir#{URI.escape dir}", '') do |response, request, result|
       case response.code
       when 204
         0

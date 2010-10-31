@@ -1,9 +1,9 @@
 $: << File.join(File.dirname(__FILE__), 'lib')
 require 'dshelf'
 
-ENV['DISTRIBUTED_SHELF_URL'] = 'https://distributedshelf.com/storage/ce484f8563ebe0aeb0147a02532ac9a3'
-#'http://localhost:8000/storage/3470e95cc331a9f9eea163f5f41e9483'
-# Dir.rmdir('/tmp/storage/3470e95cc331a9f9eea163f5f41e9483/remote') if File.exists?('/tmp/storage/3470e95cc331a9f9eea163f5f41e9483/remote')
+ENV['DISTRIBUTED_SHELF_URL'] = 'http://localhost:8000/storage/3470e95cc331a9f9eea163f5f41e9483' #'https://distributedshelf.com/storage/ce484f8563ebe0aeb0147a02532ac9a3'
+
+Dir.rmdir('/tmp/storage/3470e95cc331a9f9eea163f5f41e9483/remote') if File.exists?('/tmp/storage/3470e95cc331a9f9eea163f5f41e9483/remote')
 
 DistributedShelf::config = {
   :distributed_path => '/remote',
@@ -129,10 +129,27 @@ describe File, ' operations' do
     File.exists?('/remote/111/file4.txt').should == true
     File.exists?('/remote/111/file2.txt').should == true
   end
+
+  it 'works with punctuation' do
+    File.exists?('/remote/111/file 1 ff.txt').should == false
+    File.open('/remote/111/file 1 ff.txt', 'wb') do |file|
+      size = file.write('writing to a new remotely stored file')
+      size.should == 37
+    end
+    File.exists?('/remote/111/file 1 ff.txt').should == true
+
+    File.open('/remote/111/file 1 ff.txt') do |file|
+      data = file.read
+      data.should == 'writing to a new remotely stored file'
+    end
+
+    File.delete('/remote/111/file 1 ff.txt').should == 1
+    File.exists?('/remote/111/file 1 ff.txt').should == false
+  end
 end
 
-describe Dir, ' entries' do
-  it 'get entries' do
+describe Dir, ' ops' do
+  it 'gets entries' do
     (Dir.entries('/remote/111') - ['.', '..', 'file2.txt', 'file3.txt', 'file4.txt']).should == []
   end
 end
