@@ -1,3 +1,4 @@
 pkg
 *.gem
 test.rb
+addon-manifest.json
