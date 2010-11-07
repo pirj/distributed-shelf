@@ -1,5 +1,5 @@
 module DistributedShelf
-  VERSION = '0.2.5'
+  VERSION = '0.2.10'
 
   @@config = {}
   
@@ -11,7 +11,15 @@ module DistributedShelf
   end
 
   def distributed? file
-    @@config[:distributed_path] and not File.expand_path(file).match(@@config[:distributed_path]).nil?
+    return false unless @@config[:distributed_path]
+    if @@config[:distributed_path].respond_to? :each then
+      @@config[:distributed_path].each do |distributed_path|
+        return true unless File.expand_path(file).match(distributed_path).nil?
+      end
+    else
+      return !File.expand_path(file).match(@@config[:distributed_path]).nil?
+    end
+    false
   end
 
   def proxy_method(method, &b)
@@ -27,7 +35,13 @@ module DistributedShelf
 
   def self.config= conf
     @@config = conf
-    @@config[:distributed_path] == Regexp.new('^' + @@config[:distributed_path] + '/')
+    if @@config[:distributed_path].respond_to? :each then
+      @@config[:distributed_path].each do |distributed_path|
+        @@config[:distributed_path] == Regexp.new('^' + distributed_path + '/')
+      end
+    else
+      @@config[:distributed_path] == Regexp.new('^' + @@config[:distributed_path] + '/')
+    end
   end
 
   def server_url
@@ -46,4 +60,3 @@ require 'dshelf/dir'
 require 'dshelf/dfile'
 require 'dshelf/file'
 require 'dshelf/stat'
-

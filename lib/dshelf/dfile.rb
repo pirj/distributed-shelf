@@ -1,4 +1,5 @@
 require 'rest_client'
+# require 'httpclient'
 require 'mime/types'
 
 class DistributedFile
@@ -42,7 +43,7 @@ class DistributedFile
     return @mimetype if @mimetype
     @mimetype = MIME::Types.type_for(File.basename path)
     @mimetype = if @mimetype.empty?
-      ""
+      "application/octet-stream"
     else
       @mimetype[0]
     end
@@ -71,10 +72,18 @@ class DistributedFile
   end
 
   def read length=0, offset=0
+  #   if RUBY_VERSION >= '1.8.7' then
+  #     # stream
+  #     Stream.new "#{server_url}/storage#{URI.escape absolutepath}"
+  #   else
+  #     read_full length, offset
+  #   end
+  # end
+  # 
+  # def read_full length=0, offset=0
     params = {}
     params[:length] = length unless length == 0
     params[:offset] = offset unless offset == 0
-    HTTPClient.new
     RestClient.get("#{server_url}/storage#{URI.escape absolutepath}",
       {:params => params}) do |response, request, result|
       case response.code
@@ -88,8 +97,12 @@ class DistributedFile
     end
   end
 
+  def puts *args
+    write args.join("\n")
+  end
+
   def write string
-    RestClient.put "#{server_url}/storage#{URI.escape absolutepath}", string, :content_type => mimetype do
+    RestClient.put "#{server_url}/storage#{URI.escape absolutepath}", string, :content_type => mimetype do |response, request, result|
       case response.code
       when 204
         string.size
@@ -113,8 +126,22 @@ class DistributedFile
       f
     end
   end
-  
+
   def method_missing method
     raise "Distributed File error: #{method} not implemented"
   end
 end
+
+# class Stream
+#   def initialize path
+#     @path = path
+#   end
+# 
+#   def each
+#     HTTPClient.get_content(@path) do |chunk|
+#       p "chunk rcv: #{chunk.size}"
+#       yield chunk
+#       p "chunk rcv rt: #{chunk.size}"
+#     end
+#   end
+# end
