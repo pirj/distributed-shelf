@@ -26,4 +26,3 @@ Gem::Specification.new do |gem|
   gem.add_dependency "json", ["~> 1.2.0"]
   gem.add_dependency "mime-types", ["~> 1.0"]
 end
-

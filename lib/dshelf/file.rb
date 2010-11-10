@@ -1,6 +1,6 @@
 require 'rest_client'
 
-class File
+class File < IO
   class << self; include DistributedShelf end
   def absolutepath; File.expand_path path, Dir.pwd end
 

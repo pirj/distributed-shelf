@@ -1,12 +1,12 @@
 $: << File.join(File.dirname(__FILE__), 'lib')
 require 'dshelf'
 
-ENV['DISTRIBUTED_SHELF_URL'] = 'http://localhost:8000/storage/3470e95cc331a9f9eea163f5f41e9483' #'https://distributedshelf.com/storage/ce484f8563ebe0aeb0147a02532ac9a3'
-
-Dir.rmdir('/tmp/storage/3470e95cc331a9f9eea163f5f41e9483/remote') if File.exists?('/tmp/storage/3470e95cc331a9f9eea163f5f41e9483/remote')
+# ENV['DISTRIBUTED_SHELF_URL'] = 'https://distributedshelf.com/storage/ce484f8563ebe0aeb0147a02532ac9a3'
+ENV['DISTRIBUTED_SHELF_URL'] = 'http://localhost:8000/storage/3d026a16131e2bef191d2531f8739565' #
+# Dir.rmdir('/tmp/storage/3d026a16131e2bef191d2531f8739565/remote') if File.exists?('/tmp/storage/3d026a16131e2bef191d2531f8739565/remote')
 
 DistributedShelf::config = {
-  :distributed_path => '/remote',
+  :distributed_path => ['/remote', '/remote2'],
   :storage_url => ENV['DISTRIBUTED_SHELF_URL']
 }
 
