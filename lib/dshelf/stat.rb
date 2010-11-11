@@ -14,7 +14,7 @@ class DistributedStat
       when 200
         parse_stat response
       when 404
-        raise Errno::ENOENT
+        raise Errno::ENOENT, absolutepath
       end
     end
   end

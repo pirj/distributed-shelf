@@ -33,7 +33,7 @@ class Dir
         when 204
           0
         when 404
-          raise Errno::ENOENT
+          raise Errno::ENOENT, dir
         end
       end
     end
@@ -46,7 +46,7 @@ class Dir
       when 200
         JSON.parse response
       when 404
-        raise Errno::ENOENT
+        raise Errno::ENOENT, dir
       end
     end
   end
@@ -59,7 +59,7 @@ class Dir
       when 402
         raise Errno::ENOSPC
       when 409
-        raise Errno::EEXIST
+        raise Errno::EEXIST, dir
       end
     end
   end

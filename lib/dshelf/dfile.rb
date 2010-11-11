@@ -92,7 +92,7 @@ class DistributedFile
       when 402
         raise Errno::ENOSPC
       when 404
-        raise Errno::ENOENT
+        raise Errno::ENOENT, absolutepath
       end
     end
   end
