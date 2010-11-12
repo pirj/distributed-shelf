@@ -1,5 +1,5 @@
 module DistributedShelf
-  VERSION = '0.2.12'
+  VERSION = '0.2.13'
 
   @@config = {}
   
@@ -14,10 +14,10 @@ module DistributedShelf
     return false unless @@config[:distributed_path]
     if @@config[:distributed_path].respond_to? :each then
       @@config[:distributed_path].each do |distributed_path|
-        return true unless File.expand_path(file).match(distributed_path).nil?
+        return true unless (File.expand_path(file) + '/').match(distributed_path).nil?
       end
     else
-      return !File.expand_path(file).match(@@config[:distributed_path]).nil?
+      return !File.expand_path(file + '/').match(@@config[:distributed_path]).nil?
     end
     false
   end
@@ -36,8 +36,8 @@ module DistributedShelf
   def self.config= conf
     @@config = conf
     if @@config[:distributed_path].respond_to? :each then
-      @@config[:distributed_path].each do |distributed_path|
-        @@config[:distributed_path] == Regexp.new('^' + distributed_path + '/')
+      @@config[:distributed_path].map! do |distributed_path|
+        Regexp.new('^' + distributed_path + '/')
       end
     else
       @@config[:distributed_path] == Regexp.new('^' + @@config[:distributed_path] + '/')
