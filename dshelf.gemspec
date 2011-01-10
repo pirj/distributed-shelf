@@ -22,7 +22,7 @@ Gem::Specification.new do |gem|
     'lib/dshelf/stat.rb'
     ]
 
-  gem.add_dependency "rest-client", ["~> 1.6.1"]
+  gem.add_dependency "rest-client-next-dshelf", ["~> 1.6.1"]
   gem.add_dependency "json", ["~> 1.2.0"]
   gem.add_dependency "mime-types", ["~> 1.0"]
 end

@@ -1,5 +1,4 @@
 require 'rest_client'
-# require 'httpclient'
 require 'mime/types'
 
 class DistributedFile
@@ -72,15 +71,14 @@ class DistributedFile
   end
 
   def read length=0, offset=0
-  #   if RUBY_VERSION >= '1.8.7' then
-  #     # stream
-  #     Stream.new "#{server_url}/storage#{URI.escape absolutepath}"
-  #   else
-  #     read_full length, offset
-  #   end
-  # end
-  # 
-  # def read_full length=0, offset=0
+    # if RUBY_VERSION >= '1.8.7' then
+    #   Stream.new "#{server_url}/storage#{URI.escape absolutepath}"
+    # else
+      read_full length, offset
+    # end
+  end
+  
+  def read_full length=0, offset=0
     params = {}
     params[:length] = length unless length == 0
     params[:offset] = offset unless offset == 0

@@ -1,5 +1,5 @@
 module DistributedShelf
-  VERSION = '0.2.13'
+  VERSION = '0.3.0'
 
   @@config = {}
   
@@ -60,3 +60,4 @@ require 'dshelf/dir'
 require 'dshelf/dfile'
 require 'dshelf/file'
 require 'dshelf/stat'
+require 'dshelf/fileutils'
